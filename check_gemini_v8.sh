@@ -1,23 +1,28 @@
 #!/usr/bin/env bash
 
 # ==============================================================================
-# 🛡️ Gemini API Sentinel - Global Edition (v9.0 RC)
+# 🛡️ Gemini API Sentinel - Global Edition (v9.1)
 # ------------------------------------------------------------------------------
 # Usage: Industrial-grade auditing tool for Gemini API connectivity & performance.
 # Author: Antigravity AI
 # License: MIT
-# GitHub: https://github.com/Illacme-Project/gemini-sentinel
+# GitHub: https://github.com/Illacme/Omni-Shell-Vault
 # ------------------------------------------------------------------------------
 # Features: 
 #   - Cross-platform support (macOS/BSD, Linux/GNU, Web-environments)
 #   - Multi-protocol routing (Standard, Interaction API, TTS Modality)
 #   - Autonomous self-healing (429 backoff with retryDelay parsing)
 #   - High-precision benchmarking (Multi-path clock engine)
-# ==============================================================================
+#   - Future-proof: Easily switch between v1beta, v1, v2beta, etc.
+# ------------------------------------------------------------------------------
 
 # Global Safety & Locale Isolation
 set -o pipefail
 export LC_ALL=C
+
+# --- API Config ---
+G_API_VERSION="v1beta" # Easily upgrade to v2 or v2beta here
+G_BASE_URL="https://generativelanguage.googleapis.com/${G_API_VERSION}"
 
 # --- Initialization ---
 API_KEY=""
@@ -153,14 +158,14 @@ probe() {
 
     # Routing Intelligence
     if [[ "$CLEAN_M" == *"deep-research"* ]]; then
-        ENDPOINT="https://generativelanguage.googleapis.com/v1beta/interactions?key=${API_KEY}"
+        ENDPOINT="${G_BASE_URL}/interactions?key=${API_KEY}"
         PAYLOAD="{\"agent\": \"${CLEAN_M}\", \"input\": \"Ping\", \"background\": true}"
     elif [[ "$CLEAN_M" == *"-tts" ]]; then
-        ENDPOINT="https://generativelanguage.googleapis.com/v1beta/models/${CLEAN_M}:generateContent?key=${API_KEY}"
+        ENDPOINT="${G_BASE_URL}/models/${CLEAN_M}:generateContent?key=${API_KEY}"
         # TTS 终极对齐：移除非标准 responseModalities，改用 response_mime_type 结合 speechConfig
         PAYLOAD="{\"contents\": [{\"parts\": [{\"text\": \"Ping\"}]}], \"generationConfig\": {\"response_mime_type\": \"audio/wav\", \"speechConfig\": {\"voiceConfig\": {\"prebuiltVoiceConfig\": {\"voiceName\": \"Aoife\"}}}}}"
     else
-        ENDPOINT="https://generativelanguage.googleapis.com/v1beta/models/${CLEAN_M}:generateContent?key=${API_KEY}"
+        ENDPOINT="${G_BASE_URL}/models/${CLEAN_M}:generateContent?key=${API_KEY}"
         PAYLOAD="{\"contents\": [{\"parts\": [{\"text\": \"Ready? Result: One word.\"}]}]}"
     fi
 
@@ -250,7 +255,7 @@ echo -e "${B}${K}---------------------------------------------------------------
 case $ACTION in
     "list")
         echo -e "🔍 ${W}Retrieving authorized models...${C}"
-        RPACK=$(execute_request "GET" "https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}")
+        RPACK=$(execute_request "GET" "${G_BASE_URL}/models?key=${API_KEY}")
         BODY="${RPACK%%$D_SEP*}"
         CODE="${RPACK#*$D_SEP}"; CODE="${CODE%%$D_SEP*}"
         
@@ -268,7 +273,7 @@ case $ACTION in
     "test")
         if [ -z "$TARGET_MODEL" ]; then
             echo -e "🔎 ${K}No model specified. Selecting priority model...${C}"
-            RPACK=$(execute_request "GET" "https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}")
+            RPACK=$(execute_request "GET" "${G_BASE_URL}/models?key=${API_KEY}")
             BODY="${RPACK%%$D_SEP*}"
             if command -v jq >/dev/null 2>&1; then
                 TARGET_MODEL=$(echo "$BODY" | jq -r '.models[] | select(.supportedGenerationMethods[]? | contains("generateContent")) | .name' | head -n 1 | sed 's/models\///')
@@ -283,7 +288,7 @@ case $ACTION in
         ;;
     "all")
         echo -e "🚀 ${W}Starting Full Matrix Compatibility Scan...${C}"
-        RPACK=$(execute_request "GET" "https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}")
+        RPACK=$(execute_request "GET" "${G_BASE_URL}/models?key=${API_KEY}")
         BODY="${RPACK%%$D_SEP*}"
         CODE="${RPACK#*$D_SEP}"; CODE="${CODE%%$D_SEP*}"
 
