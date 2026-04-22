@@ -4,7 +4,7 @@ A collection of industrial-grade shell scripts for AI infrastructure, diagnostic
 
 ---
 
-## 🚀 Featured Tool: Gemini API Sentinel (v9.0 Global Edition)
+## 🚀 Featured Tool: Gemini API Sentinel (v9.1 Global Edition)
 
 The flagship diagnostic tool in this vault. It provides full-matrix auditing for the Gemini API ecosystem.
 
@@ -22,11 +22,11 @@ The flagship diagnostic tool in this vault. It provides full-matrix auditing for
    ```
 2. **Assign execution permissions / 授权**:
    ```bash
-   chmod +x check_gemini_v8.sh
+   chmod +x check_gemini.sh
    ```
 3. **Run a full audit / 全量审计**:
    ```bash
-   ./check_gemini_v8.sh -k YOUR_API_KEY -a
+   ./check_gemini.sh -k YOUR_API_KEY -a
    ```
 
 ---
