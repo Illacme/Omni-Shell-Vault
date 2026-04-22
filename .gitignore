@@ -1,0 +1,15 @@
+# Omni-Shell-Vault Ignore List
+
+# Ignore all draft/test scripts
+test*
+
+# MacOS artifacts
+.DS_Store
+
+# Temporary and log files
+*.log
+*.tmp
+*.bak
+
+# Environment variables
+.env
